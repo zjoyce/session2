@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <title>Page Title</title>
@@ -18,30 +18,52 @@
     </div><!-- /header -->
 
     <div role="main" class="ui-content">
-        <p>I'm first in the source order so I'm shown as the page.</p>
-        <p>View internal page called <a href="#bar">bar</a></p>
-    </div><!-- /content -->
 
+        <label for="text-1">Text input:</label>
+        <input name="text-1" id="text1" value="1" type="text">
+        <input type="submit" value="Submit Button" id="button1" />
+
+    <!-- put the result here -->
+    <div id="result"  class="functions"></div>
+	<label for="text-2">Add a new quote:</label>
+	 <input type="submit" value="Submit Button" id="button2" />
+    </div><!-- /content -->
+	
     <div data-role="footer">
         <h4>Page Footer</h4>
     </div><!-- /footer -->
 </div><!-- /page -->
 
-<!-- Start of second page -->
-<div data-role="page" id="bar">
+<script type="text/javascript">
+$(document).bind('pageinit', function() {
 
-    <div data-role="header">
-        <h1>Bar</h1>
-    </div><!-- /header -->
+  alert("hello");
 
-    <div role="main" class="ui-content">
-        <p>I'm the second in the source order so I'm hidden when the page loads. I'm just shown if a link that references my id is beeing clicked.</p>
-        <p><a href="#foo">Back to foo</a></p>
-    </div><!-- /content -->
+  $.ajaxSetup ({
+    cache: false
+  });
 
-    <div data-role="footer">
-        <h4>Page Footer</h4>
-    </div><!-- /footer -->
-</div><!-- /page -->
+  $( "#button1" ).bind( "click", function(event, ui) {
+    var q = $("#text1").val();
+    alert("Click "+q);
+    var jsonUrl = "http://localhost:3001/quote/"+q;
+    alert("Fetching result from "+jsonUrl);
+    $.get(jsonUrl, function(data) {
+      alert(data.author);
+      $("#result").html("<p><b>"+data.author+" said "+data.text+"</b></p>")
+    }, 'json');
+  });
+  
+  $( "#button2" ).bind( "click", function(event, ui) {
+      alert("Posting a new quote");
+      var jsonUrl = "http://localhost:3001/quote";
+      var newQuote = { "author" : "foo", "text" : "some text" };
+      $.post(jsonUrl,newQuote, function(data) {
+        alert("Added " + data.author + " " + data.text);
+      }, 'json');
+    });
+
+});
+</script>
 </body>
 </html>
